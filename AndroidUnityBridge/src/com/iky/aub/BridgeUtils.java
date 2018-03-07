@@ -1,10 +1,11 @@
 package com.iky.aub;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.iky.aub.callback.BridgeAbstractCallback;
 import com.iky.aub.callback.BridgeSessionCallback;
-import com.unity3d.player.UnityPlayer;
 
 import android.util.Log;
 
@@ -19,26 +20,48 @@ public class BridgeUtils
 {
 	private static ConcurrentHashMap<Integer, BridgeAbstractCallback> mCallbacks = new ConcurrentHashMap<>();
 	
+	private static Method mUnitySendMessage = null;
+	
+	static 
+	{
+		try 
+		{
+			Class<?> clazz = Class.forName("com.unity3d.player.UnityPlayer");
+			mUnitySendMessage = clazz.getMethod("UnitySendMessage", String.class, String.class, String.class);
+		} 
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public static void Request(String funcName, String params, BridgeAbstractCallback handler)
 	{
 		Log.e("abu", "a3");
 		// Android call Unity
-		if (handler != null)
+		try
 		{
-			int key = handler.Key();
-			if (!mCallbacks.containsKey(key))
+			if (handler != null)
 			{
-				mCallbacks.put(key, handler);
+				int key = handler.Key();
+				if (!mCallbacks.containsKey(key))
+				{
+					mCallbacks.put(key, handler);
+				}
+				mUnitySendMessage.invoke(null, BridgeConstant.GlobalGameObjectName, funcName, 
+						String.format("%s%s%d", params, BridgeConstant.SplitFlag, key));
+				Log.e("abu", "a4");
 			}
-			UnityPlayer.UnitySendMessage(BridgeConstant.GlobalGameObjectName, funcName, 
-					String.format("%s%s%d", params, BridgeConstant.SplitFlag, key));
-			Log.e("abu", "a4");
+			else
+			{
+				// no callback
+				mUnitySendMessage.invoke(null, BridgeConstant.GlobalGameObjectName, funcName, params);
+				Log.e("abu", "a5");
+			}
 		}
-		else
+		catch (Exception e)
 		{
-			// no callback
-			UnityPlayer.UnitySendMessage(BridgeConstant.GlobalGameObjectName, funcName, params);
-			Log.e("abu", "a5");
+			
 		}
 	}
 	
