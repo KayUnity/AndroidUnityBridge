@@ -30,10 +30,4 @@ public class BridgeSessionMethod extends BridgeMethod
 		BridgeUtils.Request(FuncSession, "", this);
 		Log.e("abu", "a2");
 	}
-	
-	@Override
-	public String toString()
-	{
-		return FuncSession;
-	}
 }
