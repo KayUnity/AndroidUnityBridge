@@ -4,12 +4,12 @@ import com.iky.aub.BridgeUtils;
 
 import android.util.Log;
 
-public class BridgeSessionCallback extends BridgeAbstractCallback
+public class BridgeSessionMethod extends BridgeMethod
 {
 	private final static String FuncSession = "AndroidCallUnity";
 
 	@Override
-	public void Handle(String value)
+	public void Callback(String value)
 	{
 		try
 		{
@@ -25,7 +25,7 @@ public class BridgeSessionCallback extends BridgeAbstractCallback
 	}
 
 	@Override
-	public void CallUnity()
+	public void CallApp()
 	{
 		BridgeUtils.Request(FuncSession, "", this);
 		Log.e("abu", "a2");

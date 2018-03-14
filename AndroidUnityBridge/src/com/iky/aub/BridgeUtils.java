@@ -1,32 +1,39 @@
 package com.iky.aub;
 
-import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.iky.aub.callback.BridgeAbstractCallback;
-import com.iky.aub.callback.BridgeSessionCallback;
-
+import com.iky.aub.app.BridgeApp;
+import com.iky.aub.app.BridgeCocosApp;
+import com.iky.aub.app.BridgeUnityApp;
+import com.iky.aub.callback.BridgeMethod;
+import com.iky.aub.callback.BridgeSessionMethod;
 import android.util.Log;
 
 /*
  * 
- * 1 Unity主动调用的函数写在此类中
- * 2 需要回调的函数， 提供 BridgeAbstractCallback 实例
- * 3 不需要回调的函数，可以直接调用 Request，将函数名写在 BridgeConstant里
+ * 1 需要回调的函数， 提供 BridgeAbstractCallback 实例
+ * 2 不需要回调的函数，可以直接调用 Request，将函数名写在 BridgeConstant里
  * 
  * */
 public class BridgeUtils
 {
-	private static ConcurrentHashMap<Integer, BridgeAbstractCallback> mCallbacks = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Integer, BridgeMethod> mCallbacks = new ConcurrentHashMap<>();
 	
-	private static Method mUnitySendMessage = null;
-	
+	private static BridgeApp app = null;
+
 	static 
 	{
 		try 
 		{
 			Class<?> clazz = Class.forName("com.unity3d.player.UnityPlayer");
-			mUnitySendMessage = clazz.getMethod("UnitySendMessage", String.class, String.class, String.class);
+			if (clazz != null)
+			{
+				app = new BridgeUnityApp(clazz.getMethod("UnitySendMessage", String.class, String.class, String.class));	
+			}
+			else
+			{
+				app = new BridgeCocosApp();
+			}
 		} 
 		catch (Exception e)
 		{
@@ -34,12 +41,12 @@ public class BridgeUtils
 		}
 	}
 	
-	public static void Request(String funcName, String params, BridgeAbstractCallback handler)
+	public static void Request(String funcName, String params, BridgeMethod handler)
 	{
 		Log.e("abu", "a3");
-		// Android call Unity
 		try
 		{
+			String temp = params; 
 			if (handler != null)
 			{
 				int key = handler.Key();
@@ -47,16 +54,10 @@ public class BridgeUtils
 				{
 					mCallbacks.put(key, handler);
 				}
-				mUnitySendMessage.invoke(null, BridgeConstant.GlobalGameObjectName, funcName, 
-						String.format("%s%s%d", params, BridgeConstant.SplitFlag, key));
-				Log.e("abu", "a4");
+				temp = String.format("%s%s%d", temp, BridgeConstant.SplitFlag, key);
 			}
-			else
-			{
-				// no callback
-				mUnitySendMessage.invoke(null, BridgeConstant.GlobalGameObjectName, funcName, params);
-				Log.e("abu", "a5");
-			}
+			app.Request(funcName, temp);
+			Log.e("abu", "a4");
 		}
 		catch (Exception e)
 		{
@@ -68,13 +69,13 @@ public class BridgeUtils
 	{
 		if (mCallbacks.containsKey(key))
 		{
-			mCallbacks.get(key).Handle(result);
+			mCallbacks.get(key).Callback(result);
 			Log.e("abu", "a6");
 		}
 		Log.e("abu", "a7");
 	}
 	
-	public static void Remove(BridgeAbstractCallback handler)
+	public static void Remove(BridgeMethod handler)
 	{
 		if (handler != null)
 		{
@@ -86,10 +87,11 @@ public class BridgeUtils
 		}
 	}
 	
-	public static void TestUnityCallAndroid()
+	public static void Test()
 	{
-		BridgeSessionCallback sessionCallback = new BridgeSessionCallback();
-		sessionCallback.CallUnity();
+		BridgeSessionMethod sessionCallback = new BridgeSessionMethod();
+		sessionCallback.CallApp();
 		Log.e("abu", "a1");
 	}
+
 }
