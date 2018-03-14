@@ -2,10 +2,9 @@ package com.iky.aub.app;
 
 import java.lang.reflect.Method;
 
-import com.iky.aub.BridgeConstant;
-
 public class BridgeUnityApp implements BridgeApp
 {
+	private final static String GlobalGameObjectName = "Global";
 	// 针对  Unity3d
 	private Method mUnitySendMessage = null;	
 	public BridgeUnityApp(Method method)
@@ -18,7 +17,7 @@ public class BridgeUnityApp implements BridgeApp
 	{
 		try 
 		{
-			mUnitySendMessage.invoke(null, BridgeConstant.GlobalGameObjectName, funcName, params);
+			mUnitySendMessage.invoke(null, GlobalGameObjectName, funcName, params);
 		} 
 		catch (Exception e) 
 		{
