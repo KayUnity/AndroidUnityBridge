@@ -5,8 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.iky.aub.app.BridgeApp;
 import com.iky.aub.app.BridgeCocosApp;
 import com.iky.aub.app.BridgeUnityApp;
-import com.iky.aub.callback.BridgeMethod;
-import com.iky.aub.callback.BridgeSessionMethod;
+import com.iky.aub.method.BridgeMethod;
+import com.iky.aub.method.BridgeSessionMethod;
+
 import android.util.Log;
 
 /*

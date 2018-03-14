@@ -1,4 +1,4 @@
-package com.iky.aub.callback;
+package com.iky.aub.method;
 
 public class BridgeMethod
 {	
