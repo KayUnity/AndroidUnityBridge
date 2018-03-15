@@ -6,7 +6,7 @@ import android.util.Log;
 
 public class BridgeSessionMethod extends BridgeMethod
 {
-	private final static String FuncSession = "AndroidCallUnity";
+	private final static String FuncSession = "GetSessionId";
 
 	@Override
 	public void Callback(String value)

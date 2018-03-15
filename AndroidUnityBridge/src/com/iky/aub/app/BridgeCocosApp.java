@@ -12,7 +12,7 @@ public class BridgeCocosApp implements BridgeApp
 	    //getStaticMethodInfo判断java定义的静态函数是否存在，返回bool
 	    bool ret = JniHelper::getStaticMethodInfo(minfo, "com/iky/aub/BridgeUtils", "Response", "(ILjava/lang/String)V");
 	   2 JNI 调用后，需要回调时调用
-	    minfo.env->CallStaticObjectMethod(minfo.classID, minfo.methodID, key, result);
+	    minfo.env->CallStaticVoidMethod(minfo.classID, minfo.methodID, key, result);
     */
 	
 	@Override

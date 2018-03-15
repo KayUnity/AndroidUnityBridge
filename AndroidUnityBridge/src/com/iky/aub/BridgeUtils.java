@@ -31,14 +31,10 @@ public class BridgeUtils
 			{
 				app = new BridgeUnityApp(clazz.getMethod("UnitySendMessage", String.class, String.class, String.class));	
 			}
-			else
-			{
-				app = new BridgeCocosApp();
-			}
 		} 
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			app = new BridgeCocosApp();
 		}
 	}
 	
